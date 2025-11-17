@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>🔮 Prédictions FIFA FC 25</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #0ea5e9;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    button {
+      background: #0ea5e9;
+      color: white;
+      cursor: pointer;
+    }
+    .result {
+      background: #334155;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .league, .teams, .time, .prediction {
+      margin: 5px 0;
+    }
+    .prediction {
+      font-size: 1.1em;
+      color: #22c55e;
+    }
+    .time {
+      font-size: 0.9em;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔮 Prédictions FIFA FC 25</h1>
+
+    <input type="text" id="teamHome" placeholder="🏠 Équipe domicile">
+    <input type="text" id="teamAway" placeholder="🚀 Équipe extérieure">
+    <button onclick="predict()">Obtenir la prédiction ⚡</button>
+    <button onclick="refreshTable()">🔁 Actualiser le tableau</button>
+
+    <div id="result" class="result" style="display:none;">
+      <div class="league" id="league">🎮 FIFA FC 25 - 5x5 Elite League</div>
+      <div class="teams" id="teams"></div>
+      <div class="time" id="time"></div>
+      <div class="prediction" id="half"></div>
+      <div class="prediction" id="final"></div>
+      <div class="prediction" id="table"></div>
+    </div>
+  </div>
+
+  <script>
+    let tournamentTable = {
+      "PSG": { odds: "1.85", rank: 2 },
+      "Real Madrid": { odds: "2.10", rank: 4 },
+      "Bayern": { odds: "1.75", rank: 1 },
+      "Juventus": { odds: "2.30", rank: 5 }
+    };
+
+    function refreshTable() {
+      for (let team in tournamentTable) {
+        tournamentTable[team].odds = (Math.random() * 2 + 1).toFixed(2);
+        tournamentTable[team].rank = Math.floor(Math.random() * 6) + 1;
+      }
+      alert("✅ Tableau mis à jour !");
+    }
+
+    function predict() {
+      const home = document.getElementById("teamHome").value.trim();
+      const away = document.getElementById("teamAway").value.trim();
+      if (!home || !away) return alert("Veuillez entrer les deux équipes ⚠️");
+
+      const statsHome = tournamentTable[home] || { odds: "2.00", rank: 5 };
+      const statsAway = tournamentTable[away] || { odds: "2.00", rank: 5 };
+
+      const halfHome = statsHome.odds < statsAway.odds ? 1 : 0;
+      const halfAway = statsAway.odds < statsHome.odds ? 1 : 0;
+      const finalHome = halfHome + (statsHome.odds < 2.0 ? 1 : 0);
+      const finalAway = halfAway + (statsAway.odds < 2.0 ? 1 : 0);
+
+      const now = new Date();
+      const timeString = `🗓️ ${now.toLocaleDateString()} | 🕘 ${now.toLocaleTimeString()}`;
+
+      document.getElementById("teams").textContent = `🏠 ${home} 🆚 🚀 ${away}`;
+      document.getElementById("time").textContent = timeString;
+      document.getElementById("half").textContent = `⏱️ Mi-temps : ${halfHome} - ${halfAway}`;
+      document.getElementById("final").textContent = `🏁 Score final : ${finalHome} - ${finalAway}`;
+      document.getElementById("table").innerHTML = `
+        <strong>📊 Tableau utilisé :</strong><br>
+        🏠 ${home} → ${JSON.stringify(statsHome)}<br>
+        🚀 ${away} → ${JSON.stringify(statsAway)}
+      `;
+      document.getElementById("result").style.display = "block";
+    }
+  </script>
+</body>
+</html>
